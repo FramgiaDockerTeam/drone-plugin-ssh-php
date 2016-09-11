@@ -13,5 +13,19 @@ shell_exec('chmod -R 600 ~/.ssh');
 $vargs = $arguments['vargs'];
 $commands = isset($vargs['commands']) ? $vargs['commands'] : [];
 foreach ($commands as $command) {
-    echo shell_exec($command);
+    execute($command);
+}
+
+function execute($cmd) {
+    $proc = proc_open($cmd, [['pipe','r'],['pipe','w'],['pipe','w']], $pipes);
+    while(($line = fgets($pipes[1])) !== false) {
+        fwrite(STDOUT,$line);
+    }
+    while(($line = fgets($pipes[2])) !== false) {
+        fwrite(STDERR,$line);
+    }
+    fclose($pipes[0]);
+    fclose($pipes[1]);
+    fclose($pipes[2]);
+    return proc_close($proc);
 }
