@@ -13,7 +13,10 @@ shell_exec('chmod -R 600 ~/.ssh');
 $vargs = $arguments['vargs'];
 $commands = isset($vargs['commands']) ? $vargs['commands'] : [];
 foreach ($commands as $command) {
-    execute($command);
+    $exit = execute($command);
+    if ($exit) {
+        exit(1);
+    }
 }
 
 function execute($cmd) {
